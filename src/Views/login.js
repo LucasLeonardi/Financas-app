@@ -1,19 +1,33 @@
 import React from 'react'
 import Card from '../Components/card'
 import FormGroup from '../Components/forme-group'
-import { withRouter } from 'react-router-dom';
-
+import { withRouter } from 'react-router-dom'
+import axios from 'axios';
+import UsuarioService from '../app/service/usuarioService';
 
 class Login extends React.Component{
 
     state = {
         email: '',
-        senha: ''
+        senha: '',
+        mensageErro: null
+    }
+
+    constructor(){
+        super();
+        this.service = new UsuarioService();
     }
 
     entrar = () => {
-        console.log('Email: ', this.state.email)
-        console.log('Senha: ', this.state.senha)
+        this.service.autenticar({
+            email: this.state.email,
+            senha: this.state.senha
+        }).then( response => {
+            LocalstorageService.adicionar('_usuario_logado', response.data)
+            this.props.history.push('/home')
+        }).catch( erro => {
+            this.setState({mensageErro: erro.response.data})
+        })
     }
 
     encaminharCadastro = () =>{

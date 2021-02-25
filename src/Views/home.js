@@ -1,10 +1,30 @@
-import React from 'react';
+import React from 'react'
+
+import axios from 'axios'
+import UsuarioService from '../app/service/usuarioService';
+import LocalstorageService from '../app/service/localstorageService';
 
 
 class Home extends React.Component{
 
     state = {
         valor: 0
+    }
+
+    constructor(){
+        super();
+        this.usuarioService = new UsuarioService();
+    }
+
+    componentDidMount(){
+        const usuarioLogado = LocalstorageService.resgatar('_usuario_logado')
+
+        this.service.obterSaldoPorIdUsuario(usuarioLogado.id)
+            .then(response => {
+                this.setState({valor: response.data})
+            }).catch(erro =>{
+                console.log(erro.response)
+            })
     }
 
     render(){
