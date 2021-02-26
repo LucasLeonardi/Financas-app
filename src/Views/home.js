@@ -1,8 +1,6 @@
 import React from 'react'
-
-import axios from 'axios'
-import UsuarioService from '../app/service/usuarioService';
-import LocalstorageService from '../app/service/localstorageService';
+import UsuarioService from '../app/service/usuarioService'
+import LocalstorageService from '../app/service/localstorageService'
 
 
 class Home extends React.Component{
@@ -19,7 +17,7 @@ class Home extends React.Component{
     componentDidMount(){
         const usuarioLogado = LocalstorageService.resgatar('_usuario_logado')
 
-        this.service.obterSaldoPorIdUsuario(usuarioLogado.id)
+        this.usuarioService.obterSaldoPorIdUsuario(usuarioLogado.id)
             .then(response => {
                 this.setState({valor: response.data})
             }).catch(erro =>{

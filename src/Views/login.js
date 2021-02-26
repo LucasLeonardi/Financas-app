@@ -2,15 +2,15 @@ import React from 'react'
 import Card from '../Components/card'
 import FormGroup from '../Components/forme-group'
 import { withRouter } from 'react-router-dom'
-import axios from 'axios';
-import UsuarioService from '../app/service/usuarioService';
+import UsuarioService from '../app/service/usuarioService'
+import { mensagemError } from '../Components/toastr'
+import LocalstorageService from '../app/service/localstorageService'
 
 class Login extends React.Component{
 
     state = {
         email: '',
-        senha: '',
-        mensageErro: null
+        senha: ''
     }
 
     constructor(){
@@ -26,7 +26,9 @@ class Login extends React.Component{
             LocalstorageService.adicionar('_usuario_logado', response.data)
             this.props.history.push('/home')
         }).catch( erro => {
-            this.setState({mensageErro: erro.response.data})
+            if(erro.response && erro.response.data){
+                mensagemError(erro.response.data)
+            }
         })
     }
 

@@ -1,4 +1,3 @@
-import ApiService from "../apiservices";
 import ApiService from '../apiservices'
 
 class UsuarioService extends ApiService{
@@ -12,7 +11,7 @@ class UsuarioService extends ApiService{
     }
 
     obterSaldoPorIdUsuario(idUsuario){
-        return this.get(`/${idUsuario}/saldo`)
+        return this.get(`/${idUsuario}/saldo`);
     }
 }
 
