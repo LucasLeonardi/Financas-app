@@ -11,7 +11,11 @@ class UsuarioService extends ApiService{
     }
 
     obterSaldoPorIdUsuario(idUsuario){
-        return this.get(`/${idUsuario}/saldo`);
+        return this.get(`/${idUsuario}/saldo`)
+    }
+
+    cadastrarUsuario(usuario){
+        return this.post('/', usuario)
     }
 }
 
