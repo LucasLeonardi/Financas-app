@@ -6,6 +6,7 @@ import Card from '../../Components/card';
 import FormGroup from '../../Components/forme-group';
 import SelectMenu from '../../Components/select-menu';
 import LancamentoTable from './lancamentosTable';
+import * as messagens from '../../Components/toastr'
 
 class ConsultaLancamento extends React.Component{
 
@@ -13,17 +14,25 @@ class ConsultaLancamento extends React.Component{
         ano: '',
         mes: '',
         tipo: '',
+        descricao: '',
         lancamentos: []
     }
 
     buscar = () =>{
+
+        if(!this.state.ano){
+            messagens.mensagemError('O preenchimento do campo ANO é obrigatório')
+            return false;
+        }
+        
         const usuarioLogado = LocalstorageService.resgatar('_usuario_logado')
 
         const lancamentoFiltro = {
             ano: this.state.ano ,
             mes: this.state.mes,
             tipo: this.state.tipo,
-            usuario: usuarioLogado.id
+            usuario: usuarioLogado.id,
+            descricao: this.state.descricao
         }
 
         this.service.consultar(lancamentoFiltro)
@@ -39,29 +48,29 @@ class ConsultaLancamento extends React.Component{
         this.service = new LancamentoService();
     }
 
+    editar = (id) =>{
+        console.log(id)
+    }
+
+    deletar = (lancamento) =>{
+
+        this.service.deletar(lancamento.id)
+            .then(response =>{
+                const lancamentos = this.state.lancamentos;
+                const index = lancamentos.indexOf(lancamento)
+                lancamentos.splice(index, 1)
+                this.setState(lancamentos)
+                messagens.mensagemSucesso('Lancamento deletado com sucesso')
+            }).catch(erro =>{
+                messagens.mensagemError('Ocorreu um erro ao tentar deletar um lancamento')
+            })
+    }
+
     render(){
 
-        const meses = [
-            {label: 'Selecione....' , value: ''},
-            {label: 'Janeiro' , value: 1},
-            {label: 'Favereiro' , value: 2},
-            {label: 'Março' , value: 3},
-            {label: 'Abril', value: 4},
-            {label: 'Maio', value: 5},
-            {label: 'Junho', value: 6},
-            {label: 'Julho', value: 7},
-            {label: 'Agosto', value: 8},
-            {label: 'Setembro', value: 9},
-            {label: 'Outubro', value: 10},
-            {label: 'Novembro', value: 11},
-            {label: 'Dezembro', value: 12}
-        ]
+        const meses = this.service.obterListaMeses();
 
-        const tipos = [
-            {label: 'Selecione....' , value: ''},
-            {label: 'Despesa', value: 'DESPESA'},
-            {label: 'Receita', value: 'RECEITA'}
-        ]
+        const tipos = this.service.obterListatipos();
 
         return(
             <Card title = "Buscar Lançamentos">
@@ -77,6 +86,15 @@ class ConsultaLancamento extends React.Component{
                                         value={this.state.ano}
                                         onChange={e => this.setState({ano: e.target.value})}
                                         placeholder="Digite o Ano"/>
+                            </FormGroup>
+
+                            <FormGroup htmlFor="inputDesc" label="Descrição: ">
+                                <input  type="text" 
+                                        className="form-control" 
+                                        id="inputDesc"
+                                        value={this.state.descricao}
+                                        onChange={e => this.setState({descricao: e.target.value})}
+                                        placeholder="Digite a Descrição"/>
                             </FormGroup>
 
                             <FormGroup htmlFor="inputMes" label="Mês:">
@@ -107,7 +125,9 @@ class ConsultaLancamento extends React.Component{
                 <div className="row">
                     <div className="col-md-12">
                         <div className="bs-component">
-                            <LancamentoTable lancamentos={this.state.lancamentos} />
+                            <LancamentoTable lancamentos={this.state.lancamentos} 
+                                             deletar={this.deletar}
+                                             editar={this.editar} />
                         </div>
                     </div>
                 </div>
