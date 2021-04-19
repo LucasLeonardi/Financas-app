@@ -19,39 +19,15 @@ class Cadastro extends React.Component{
         this.usuarioService = new UsuarioService();
     }
 
-    validar(){
-        const msg = []
-
-        if(!this.state.nome){
-            msg.push('O campo Nome é obrigatório')
-        }
-
-        if(!this.state.email){
-            msg.push('O campo Email é obrigatório')
-        }else if(!this.state.email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]/)){
-            msg.push('O email incerido não é valido')
-        }
-
-        if(!this.state.senha){
-            msg.push('O campo Senha é obrigatório')
-        }
-
-        if(!this.state.repetirSenha){
-            msg.push('O campo Repita Senha é obrigatório')
-        }
-
-        if(this.state.senha !== this.state.repetirSenha){
-            msg.push('As senhas digitadas tem que ser iguais')
-        }
-
-        return msg
-    }
-
     cadastrar = () => {
-        const msg = this.validar()
+        const { nome, email, senha, repetirSenha } = this.state;
+        const usuarioValidar = { nome, email, senha, repetirSenha };
 
-        if(msg && msg.length > 0){
-            msg.forEach((msg, i) =>{
+        try{
+            this.usuarioService.validar(usuarioValidar)
+        }catch(erro){
+            const msgs = erro.mensagens;
+            msgs.forEach((msg, i) => {
                 mensagemError(msg)
             });
             return false;
@@ -62,6 +38,7 @@ class Cadastro extends React.Component{
             nome: this.state.nome,
             senha: this.state.senha
         }
+
         this.usuarioService.cadastrarUsuario(usuario)
             .then( response => {
                 mensagemSucesso('Usuario cadastrado com sucesso, faça o login para continuar.')

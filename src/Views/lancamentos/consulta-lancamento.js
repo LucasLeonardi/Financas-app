@@ -41,6 +41,10 @@ class ConsultaLancamento extends React.Component{
 
         this.service.consultar(lancamentoFiltro)
             .then(resposta => {
+                if(resposta.data.length < 1){
+                    messagens.mensagemError('Nenhum resultado encontrado')
+                    return false;
+                }
                 this.setState({lancamentos: resposta.data})
             }).catch(erro => {
                 console.log(erro)
@@ -53,7 +57,7 @@ class ConsultaLancamento extends React.Component{
     }
 
     editar = (id) =>{
-        console.log(id)
+        this.props.history.push(`/cadastro-lancamentos/${id}`)
     }
 
     abrirConfirmacao = (lancamento) =>{
@@ -62,6 +66,22 @@ class ConsultaLancamento extends React.Component{
 
     cancelarDeletarLancamento = () =>{
         this.setState({showConfirmDialoge : false, deletarLancamento : {}})
+    }
+
+    alterarStatus = (lancamento, status) =>{
+        this.service.alterarStatus(lancamento.id, status)
+            .then(response => {
+                const lancamentos = this.state.lancamentos;
+                const index = lancamentos.indexOf(lancamento)
+                if(index !== -1){
+                    lancamento['status'] = status;
+                    lancamentos[index] = lancamento;
+                    this.setState({lancamento})
+                }
+                messagens.mensagemSucesso('Status alterado com sucesso')
+            }).catch(erro => {
+                messagens.mensagemError('Ocorreu um erro ao tentar atualizar o status do lançamento')
+            })
     }
 
     deletar = () =>{
@@ -133,8 +153,13 @@ class ConsultaLancamento extends React.Component{
                                             lista={tipos} />
                             </FormGroup>
 
-                            <button onClick={this.buscar} className="btn btn-success">Buscar</button>
-                            <button className="btn btn-danger">Cadastrar</button>
+                            <button onClick={this.buscar} className="btn btn-success">
+                                <i className="pi pi-search"></i> Buscar
+                            </button>
+
+                            <button className="btn btn-danger" onClick={e => this.props.history.push('/cadastro-lancamentos')}>
+                                <i className="pi pi-plus"></i> Cadastrar
+                            </button>
 
                         </div>
                     </div>
@@ -147,7 +172,8 @@ class ConsultaLancamento extends React.Component{
                         <div className="bs-component">
                             <LancamentoTable lancamentos={this.state.lancamentos} 
                                              deletar={this.abrirConfirmacao}
-                                             editar={this.editar} />
+                                             editar={this.editar} 
+                                             atualizarStatus={this.alterarStatus}/>
                         </div>
                     </div>
                 </div>

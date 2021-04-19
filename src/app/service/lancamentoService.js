@@ -1,4 +1,5 @@
 import ApiService from "../apiservices";
+import ErroValidacao from "../exception/erroValidacao";
 
 
 class LancamentoService extends ApiService{
@@ -58,12 +59,52 @@ class LancamentoService extends ApiService{
         return this.get(params)
     }
 
+    alterarStatus(id, status){
+        return this.put(`/${id}/statusAtualizado`, {status})
+    }
+
+    validar(lancamento){
+        const erros = [];
+
+        if(!lancamento.descricao){
+            erros.push("Informe uma descrição")
+        }
+
+        if(!lancamento.ano){
+            erros.push("Informe o ano")
+        }
+
+        if(!lancamento.mes){
+            erros.push("Informe o mês")
+        }
+
+        if(!lancamento.valor){
+            erros.push("Informe um valor")
+        }
+
+        if(!lancamento.tipo){
+            erros.push("Informe o tipo")
+        }
+
+        if(erros && erros.length > 0){
+            throw new ErroValidacao(erros)
+        }
+    }
+
     salvar(lancamento){
         return this.post('/', lancamento)
     }
 
     deletar(id){
         return this.delete(`/${id}`)
+    }
+
+    obterPorId(id){
+        return this.get(`/${id}`)
+    }
+
+    alterar(lancamento){
+        return this.put(`/${lancamento.id}`, lancamento)
     }
 }
 

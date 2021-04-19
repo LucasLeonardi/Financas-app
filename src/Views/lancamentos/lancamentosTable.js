@@ -14,15 +14,31 @@ function LancamentoTable(props){
                 <td>
 
                     <button type="button" 
-                            className="btn btn-primary" 
-                            onClick={e => props.editar(lancamento.id)}>
-                            Editar
+                            className="btn btn-success" 
+                            title="Efetivar"
+                            onClick={e => props.atualizarStatus(lancamento, 'EFETIVADO')}>
+                            <i className="pi pi-check p-mr-2"></i>
                     </button>
 
                     <button type="button" 
+                            title="Cancelar"
+                            className="btn btn-warning" 
+                            onClick={e => props.atualizarStatus(lancamento, 'CANCELADO')}>
+                            <i className="pi pi-times-circle p-mr-2"></i>
+                    </button>
+
+                    <button type="button" 
+                            title="Excluir"
                             className="btn btn-danger" 
                             onClick={e => props.deletar(lancamento)}>
-                            Deletar
+                            <i className="pi pi-trash p-mr-2"></i>
+                    </button>
+
+                    <button type="button" 
+                            title="Editar"
+                            className="btn btn-primary" 
+                            onClick={e => props.editar(lancamento.id)}>
+                            <i className="pi pi-pencil p-mr-2"></i>
                     </button>
 
                 </td>
