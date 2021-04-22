@@ -27,10 +27,12 @@ class Cadastro extends React.Component{
             this.usuarioService.validar(usuarioValidar)
         }catch(erro){
             const msgs = erro.mensagens;
-            msgs.forEach((msg, i) => {
-                mensagemError(msg)
-            });
-            return false;
+            if(msgs && msgs.length > 0){
+                msgs.forEach((msg, i) => {
+                    mensagemError(msg)
+                });
+                return false;
+            }
         }
 
         const usuario = {
